@@ -4,6 +4,7 @@ class DevelopmentConfig():
     MYSQL_USER = 'admin'
     MYSQL_PASSWORD = 'database_cib'
     MYSQL_DB = 'db_cib'
+    SECRET_KET = 'test'
 
 config = {
     'development' : DevelopmentConfig
