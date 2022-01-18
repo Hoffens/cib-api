@@ -11,13 +11,15 @@ auth = Blueprint('auth', __name__)
 def login():
     # se recibe un payload con el user y password
     data = request.get_json()
+    print(data)
     rutUsuario = data["user"]
     passwordUsuario = data["password"]  # aca se debe hashear la password
 
     try:
         #buscamos en la db si el usuario existe
         cursor = db.connection.cursor()
-        query = f"SELECT * FROM usuario WHERE rut = {rutUsuario} and u_password = {passwordUsuario}"
+        query = f"SELECT * FROM usuario WHERE rut = {rutUsuario} and u_password = '{passwordUsuario}'"
+        print(query)
         cursor.execute(query)
         datos = cursor.fetchone()
 
