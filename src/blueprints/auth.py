@@ -1,10 +1,10 @@
-import json
 import jwt
 import datetime
 from flask import Blueprint, jsonify, request
 from json import dumps  
 from extensions import db
 from config import config
+
 
 auth = Blueprint('auth', __name__)
 
@@ -16,10 +16,10 @@ def login():
     passwordUsuario = data["password"]  # aca se debe hashear la password
 
     try:
-    #buscamos en la db si el usuario existe
+        #buscamos en la db si el usuario existe
         cursor = db.connection.cursor()
         query = f"SELECT * FROM usuario WHERE rut = {rutUsuario} and u_password = {passwordUsuario}"
-        print(query)
+        #print(query)
         cursor.execute(query)
         datos = cursor.fetchall()
 
