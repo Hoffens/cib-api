@@ -9,7 +9,7 @@ user = Blueprint('user', __name__)
 
 
 @user.route('/api/users/register', methods=['POST'])
-@token_required
+#@token_required
 def user_register():
     try:
         data = request.get_json()
@@ -25,7 +25,6 @@ def user_register():
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
                     '{data['correo']}', '{data['telefono']}',date('{data['fecha_ingreso']}'), {data['grupo_sanguineo']}, 
                     '{hashed_password.decode('utf-8')}', 1);"""
-            print(query)
             cursor.execute(query)
             db.connection.commit()
             cursor.close()
