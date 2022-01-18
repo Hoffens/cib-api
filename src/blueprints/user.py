@@ -46,7 +46,18 @@ def obtener_usuarios():
         cursor.close()
 
         return jsonify({ 'status': 'Ok', 'message' : 'Usuarios obtenidos correctamente.', 'data' : users_json }), 200
-        
+
     except:       
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500
-    
+
+
+@user.route('/api/users/<rut_usuario>', methods=['PUT'])
+@token_required
+def actualizar_usuario(rut_usuario):
+    return jsonify({ 'status': 'Error', 'message' : 'No implementado.' }), 500
+
+
+@user.route('/api/users/des/<rut_usuario>', methods=['PUT'])
+@token_required
+def desactivar_usuario(rut_usuario):
+    return jsonify({ 'status': 'Error', 'message' : 'No implementado.' }), 500
