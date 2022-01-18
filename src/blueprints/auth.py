@@ -1,7 +1,6 @@
 import jwt
 import datetime
 from flask import Blueprint, jsonify, request
-from json import dumps  
 from extensions import db
 from config import config
 
@@ -19,9 +18,8 @@ def login():
         #buscamos en la db si el usuario existe
         cursor = db.connection.cursor()
         query = f"SELECT * FROM usuario WHERE rut = {rutUsuario} and u_password = {passwordUsuario}"
-        #print(query)
         cursor.execute(query)
-        datos = cursor.fetchall()
+        datos = cursor.fetchone()
 
         if datos:
             # le otorgamos un token al usuario y expira luego de 60 minutos
@@ -38,5 +36,6 @@ def login():
             return jsonify({ 'status': 'Ok', 'message' : 'Autenticación exitosa.', 'token' : token }), 200
 
         return jsonify({ 'status': 'Error', 'message' : 'Usuario o contraseña incorrectos.' }), 400
+        
     except:
        return jsonify({ 'status': 'Error', 'message' : 'No se proporcionó el usuario o contraseña.' }), 400
