@@ -1,3 +1,4 @@
+import bcrypt
 from flask import Blueprint, jsonify, request
 from src.service.token_required import token_required
 from src.service.to_json import query_to_json_list
@@ -12,6 +13,7 @@ user = Blueprint('user', __name__)
 def user_register():
     try:
         data = request.get_json()
+        hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
         query = f"SELECT * FROM usuario where rut = {data['rut']}"
         cursor = db.connection.cursor()
         cursor.execute(query)
@@ -19,10 +21,11 @@ def user_register():
 
         if user is None:
             query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo, telefono,
-                    fecha_ingreso, grupo_sanguineo, u_password, activo) values ({data['rut']}, {data['compania']}, {data['rol']}, 
+                    fecha_ingreso, grupo_sanguineo, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
                     '{data['correo']}', '{data['telefono']}',date('{data['fecha_ingreso']}'), {data['grupo_sanguineo']}, 
-                    '{data['password']}', 1);"""
+                    '{hashed_password.decode('utf-8')}', 1);"""
+            print(query)
             cursor.execute(query)
             db.connection.commit()
             cursor.close()
