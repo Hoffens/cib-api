@@ -1,5 +1,6 @@
 import bcrypt
 from flask import Blueprint, jsonify, request
+from jsonschema import validate
 from src.service.token_required import token_required
 from src.service.to_json import query_to_json_list
 from extensions import db
@@ -7,12 +8,39 @@ from extensions import db
 
 user = Blueprint('user', __name__)
 
+user_schema = {
+    "type" : "object",
+    "properties" : {
+        "rut" : {"type" : "number"},
+        "password" : {"type" : "string"},
+        "compania" : {"type" : "number"},
+        "nombre" : {"type" : "string"},
+        "apellido_paterno" : {"type" : "string"},
+        "apellido_materno" : {"type" : "string"},
+        "fecha_nacimiento": {
+            "type": "string",
+            "format": "date"
+        },
+        "correo" : {"type" : "string"},
+        "telefono" : {"type" : "string"},
+        "fecha_ingreso": {
+            "type": "string",
+            "format": "date"
+        },
+        "grupo_sanguineo" : {"type" : "number"},
+        "activo" : {"type" : "boolean"},
+    },
+    "required": ["rut", "password", "compania", "nombre", "apellido_paterno", "apellido_materno",
+                "fecha_nacimiento", "correo", "activo"]
+}
+
 
 @user.route('/api/users', methods=['POST'])
 @token_required
 def user_register():
     try:
         data = request.get_json()
+        validate(instance=data, schema=user_schema)
         hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
         query = f"SELECT * FROM usuario where rut = {data['rut']}"
         cursor = db.connection.cursor()
@@ -34,7 +62,7 @@ def user_register():
         return jsonify({ 'status': 'Error', 'message' : 'Usuario ya existe.' }), 422
         
     except:
-        return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500
+        return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
 
 
 @user.route('/api/users', methods=['GET'])
@@ -42,10 +70,9 @@ def user_register():
 def obtener_usuarios():
     try:
         cursor = db.connection.cursor()
-        #query = f"SELECT * FROM usuario ORDER BY compania"
         query = f"""SELECT u.rut, c.nombre as compania, r.nombre as rol, u.nombre, u.apellido_paterno, u.apellido_materno, u.fecha_nacimiento, 
-                u.correo, u.telefono, u.fecha_ingreso, gs.tipo, u.u_password, u.activo FROM usuario u INNER JOIN compania c ON u.compania = 
-                c.numero INNER JOIN rol r ON r.id = u.rol INNER JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
+                u.correo, u.telefono, u.fecha_ingreso, gs.tipo as grupo_sanguineo, u.u_password, u.activo FROM usuario u INNER JOIN compania c 
+                ON u.compania = c.numero INNER JOIN rol r ON r.id = u.rol INNER JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
         cursor.execute(query)
         users_json = query_to_json_list(cursor)
         cursor.close()
@@ -67,9 +94,12 @@ def actualizar_usuario(rut_usuario):
         cursor.close()
 
         if user:
-            query = f""
+            data = request.get_json()
+            validate(instance=data, schema=user_schema)
+            return jsonify({ 'status': 'Ok', 'message' : 'Usuario actualizado correctamente.'}), 200
 
-        return jsonify({ 'status': 'Ok', 'message' : 'Usuario actualizado correctamente.'}), 200
+        return jsonify({ 'status': 'Ok', 'message' : 'Usuario no existe.'}), 404
+        
 
     except:
-        return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500
+        return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
