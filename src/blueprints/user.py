@@ -8,8 +8,8 @@ from extensions import db
 user = Blueprint('user', __name__)
 
 
-@user.route('/api/users/register', methods=['POST'])
-#@token_required
+@user.route('/api/users', methods=['POST'])
+@token_required
 def user_register():
     try:
         data = request.get_json()
@@ -42,7 +42,10 @@ def user_register():
 def obtener_usuarios():
     try:
         cursor = db.connection.cursor()
-        query = f"SELECT * FROM usuario ORDER BY compania"
+        #query = f"SELECT * FROM usuario ORDER BY compania"
+        query = f"""SELECT u.rut, c.nombre as compania, r.nombre as rol, u.nombre, u.apellido_paterno, u.apellido_materno, u.fecha_nacimiento, 
+                u.correo, u.telefono, u.fecha_ingreso, gs.tipo, u.u_password, u.activo FROM usuario u INNER JOIN compania c ON u.compania = 
+                c.numero INNER JOIN rol r ON r.id = u.rol INNER JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
         cursor.execute(query)
         users_json = query_to_json_list(cursor)
         cursor.close()
@@ -56,10 +59,17 @@ def obtener_usuarios():
 @user.route('/api/users/<rut_usuario>', methods=['PUT'])
 @token_required
 def actualizar_usuario(rut_usuario):
-    return jsonify({ 'status': 'Error', 'message' : 'No implementado.' }), 500
+    try:
+        cursor = db.connection.cursor()
+        query = f"SELECT * FROM usuario WHERE rut = {rut_usuario}"
+        cursor.execute(query)
+        user = cursor.fetchone()
+        cursor.close()
 
+        if user:
+            query = f""
 
-@user.route('/api/users/des/<rut_usuario>', methods=['PUT'])
-@token_required
-def desactivar_usuario(rut_usuario):
-    return jsonify({ 'status': 'Error', 'message' : 'No implementado.' }), 500
+        return jsonify({ 'status': 'Ok', 'message' : 'Usuario actualizado correctamente.'}), 200
+
+    except:
+        return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500

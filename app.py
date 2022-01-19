@@ -19,9 +19,12 @@ def register_extensions(app):
 def register_blueprints(app):
     from src.blueprints.auth import auth
     from src.blueprints.user import user
+    from src.blueprints.compania import compania
 
     app.register_blueprint(auth)    
-    app.register_blueprint(user)    
+    app.register_blueprint(user)
+    app.register_blueprint(compania)    
+
 
 
 if __name__ == '__main__':
