@@ -7,7 +7,6 @@ from extensions import db
 
 
 user = Blueprint('user', __name__)
-
 user_schema = {
     "type" : "object",
     "properties" : {
