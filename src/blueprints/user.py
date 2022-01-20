@@ -51,7 +51,7 @@ def user_register():
             query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo, telefono,
                     fecha_ingreso, grupo_sanguineo, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', '{data['telefono']}',date('{data['fecha_ingreso']}'), {data['grupo_sanguineo']}, 
+                    '{data['correo']}', '{data['telefono']}', date('{data['fecha_ingreso']}'), {data['grupo_sanguineo']}, 
                     '{hashed_password.decode('utf-8')}', 1);"""
             cursor.execute(query)
             db.connection.commit()
@@ -71,8 +71,8 @@ def obtener_usuarios():
     try:
         cursor = db.connection.cursor()
         query = f"""SELECT u.rut, c.nombre as compania, r.nombre as rol, u.nombre, u.apellido_paterno, u.apellido_materno, u.fecha_nacimiento, 
-                u.correo, u.telefono, u.fecha_ingreso, gs.tipo as grupo_sanguineo, u.u_password, u.activo FROM usuario u INNER JOIN compania c 
-                ON u.compania = c.numero INNER JOIN rol r ON r.id = u.rol INNER JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
+                u.correo, u.telefono, u.fecha_ingreso, gs.tipo as grupo_sanguineo, u.activo FROM usuario u INNER JOIN compania c ON u.compania = 
+                c.numero INNER JOIN rol r ON r.id = u.rol INNER JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
         cursor.execute(query)
         users_json = query_to_json_list(cursor)
         cursor.close()
@@ -83,23 +83,35 @@ def obtener_usuarios():
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500
 
 
-@user.route('/api/users/<rut_usuario>', methods=['PUT'])
+@user.route('/api/users', methods=['PUT'])
 @token_required
-def actualizar_usuario(rut_usuario):
+def actualizar_usuario():
     try:
+        data = request.get_json()        
+        validate(instance=data, schema=user_schema)
         cursor = db.connection.cursor()
-        query = f"SELECT * FROM usuario WHERE rut = {rut_usuario}"
+        query = f"SELECT * FROM usuario WHERE rut = {data['rut']}"
         cursor.execute(query)
         user = cursor.fetchone()
-        cursor.close()
 
         if user:
-            data = request.get_json()
+            data = request.get_json()        
             validate(instance=data, schema=user_schema)
+            hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
+            
+            query = f"""UPDATE usuario SET compania = {data['compania']}, rol = {data['rol']}, nombre = '{data['nombre']}', 
+                    apellido_paterno = '{data['apellido_paterno']}', apellido_materno = '{data['apellido_materno']}', 
+                    fecha_nacimiento = date('{data['fecha_nacimiento']}'), correo = '{data['correo']}', telefono = '{data['telefono']}', 
+                    fecha_ingreso = date('{data['fecha_ingreso']}'), grupo_sanguineo = {data['grupo_sanguineo']}, u_password = 
+                    '{hashed_password.decode('utf-8')}', activo = {data['activo']} WHERE rut = {data['rut']}"""
+
+            cursor.execute(query)
+            db.connection.commit()
+            cursor.close()
+
             return jsonify({ 'status': 'Ok', 'message' : 'Usuario actualizado correctamente.'}), 200
 
         return jsonify({ 'status': 'Ok', 'message' : 'Usuario no existe.'}), 404
-        
 
     except:
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
