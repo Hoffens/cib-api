@@ -12,6 +12,7 @@ auth = Blueprint('auth', __name__)
 def login():
     # se recibe un payload con el user y password
     data = request.get_json()
+    print("asdas")
     rutUsuario = data["user"]
     passwordUsuario = data["password"].encode('utf-8')
 
