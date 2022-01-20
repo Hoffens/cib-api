@@ -35,7 +35,7 @@ user_schema = {
 
 
 @user.route('/api/users', methods=['POST'])
-#@token_required
+@token_required
 def user_register():
     try:
         data = request.get_json()
