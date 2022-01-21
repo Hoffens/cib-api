@@ -19,7 +19,7 @@ compania_schema = {
 
 
 @compania.route('/api/companias', methods=['POST'])
-@token_required
+#@token_required
 def compania_register():
     #try:
         data = request.get_json()
@@ -39,7 +39,7 @@ def compania_register():
 
 
 @compania.route('/api/companias', methods=['GET'])
-@token_required
+#@token_required
 def obtener_companias():
     try:
         cursor = db.connection.cursor()

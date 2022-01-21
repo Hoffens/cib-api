@@ -20,10 +20,12 @@ def register_blueprints(app):
     from src.blueprints.auth import auth
     from src.blueprints.user import user
     from src.blueprints.compania import compania
+    from src.blueprints.rol import rol
 
     app.register_blueprint(auth)    
     app.register_blueprint(user)
     app.register_blueprint(compania)    
+    app.register_blueprint(rol)
 
 
 
