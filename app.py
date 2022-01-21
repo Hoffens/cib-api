@@ -22,12 +22,14 @@ def register_blueprints(app):
     from src.blueprints.compania import compania
     from src.blueprints.rol import rol
     from src.blueprints.ads import ads
+    from src.blueprints.carro import carro
 
     app.register_blueprint(auth)    
     app.register_blueprint(user)
     app.register_blueprint(compania)    
     app.register_blueprint(rol)
     app.register_blueprint(ads)
+    app.register_blueprint(carro)
 
 
 
