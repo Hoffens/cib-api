@@ -35,7 +35,7 @@ user_schema = {
 
 
 @user.route('/api/users', methods=['POST'])
-@token_required
+#@token_required
 def user_register():
     try:
         data = request.get_json()
@@ -65,7 +65,7 @@ def user_register():
 
 
 @user.route('/api/users', methods=['GET'])
-@token_required
+#@token_required
 def obtener_usuarios():
     try:
         cursor = db.connection.cursor()
@@ -83,7 +83,7 @@ def obtener_usuarios():
 
 
 @user.route('/api/users', methods=['PUT'])
-@token_required
+#@token_required
 def actualizar_usuario():
     try:
         data = request.get_json()        
