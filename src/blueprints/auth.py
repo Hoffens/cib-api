@@ -58,7 +58,7 @@ def login():
        return jsonify({ 'status': 'Error', 'message' : 'No se proporcionó el usuario o contraseña.' }), 400
 
 
-@auth.route('/api/validateToken', methods=['POST'])
+@auth.route('/api/validateToken', methods=['GET'])
 @token_required
 def validateToken():
     return jsonify({ 'status': 'Ok', 'message' : 'Autenticación exitosa.'}), 200

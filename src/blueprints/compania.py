@@ -6,6 +6,7 @@ from extensions import db
 
 
 compania = Blueprint('compania', __name__)
+
 compania_schema = {
     "type" : "object",
     "properties" : {

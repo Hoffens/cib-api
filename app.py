@@ -30,7 +30,6 @@ def register_blueprints(app):
     app.register_blueprint(ads)
 
 
-
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True)     # cambiar True por False en produccion
