@@ -24,15 +24,6 @@ ads_schema = {
     "required": ["id", "clasificacion", "obac", "estado", "direccion", "fecha_hora", "activo"]
 }
 
-ads_delete_schema = {
-        "type": "object",
-        "properties": {
-            "id": {"type": "number"}
-            },
-        "required": ["id"]
-}
-
-
 @ads.route('/api/ads', methods=['POST'])
 #@token_required
 def ads_register():
@@ -101,32 +92,6 @@ def actualizar_ads():
 
             return jsonify(
                 {'status': 'Ok', 'message': 'Acto de servicio actualizado correctamente.'}), 200
-
-        return jsonify({'status': 'Ok', 'message': 'El acto de servicio no existe.'}), 404
-
-    except BaseException:
-        return jsonify(
-            {'status': 'Error', 'message': 'Error inesperado, verifique que la información cargada sea correcta.'}), 500
-
-@ads.route('/api/ads', methods=['PUT'])
-#@token_required
-def eliminar_ads():
-    try:
-        data = request.get_json()
-        validate(instance=data, schema=ads_delete_schema)
-        cursor = db.connection.cursor()
-        query = f"SELECT * FROM usuario WHERE rut = {data['id']}"
-        cursor.execute(query)
-        ads = cursor.fetchone()
-
-        if ads:
-            query = f"""UPDATE acto_de_servicio SET activo = 0 WHERE id = {data['id']};"""
-            cursor.execute(query)
-            db.connection.commit()
-            cursor.close()
-
-            return jsonify(
-                {'status': 'Ok', 'message': 'Acto de servicio eliminado correctamente.'}), 200
 
         return jsonify({'status': 'Ok', 'message': 'El acto de servicio no existe.'}), 404
 
