@@ -153,4 +153,4 @@ cython_debug/
 
 # Vim swap files and vim sessions
 *.swp
-.vim
+*.vim
