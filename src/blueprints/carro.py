@@ -107,7 +107,9 @@ def obtener_carro():
         cursor.execute(query)
         carro = query_to_json(cursor)
         cursor.close()
-        return jsonify({'status': 'Ok', 'message': 'carro obtenido correctamente.', 'data': carro}), 200
+        if carro is not None:
+            return jsonify({'status': 'Ok', 'message': 'Carro obtenido correctamente.', 'data': carro}), 200
+        return jsonify({'status': 'Error', 'message': 'El carro suministrado no existe.'}), 400
 
     except:
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
