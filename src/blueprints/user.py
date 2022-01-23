@@ -28,9 +28,10 @@ user_schema = {
         },
         "grupo_sanguineo" : {"type" : "number"},
         "activo" : {"type" : "boolean"},
+        "rut_cuenta": {"type": "number"}
     },
     "required": ["rut", "password", "compania", "nombre", "apellido_paterno", "apellido_materno",
-                "fecha_nacimiento", "correo", "activo"]
+                "fecha_nacimiento", "correo", "activo", "rut_cuenta"]
 }
 
 user_compania_schema = {
@@ -75,9 +76,16 @@ def crear_usuario():
     try:
         data = request.get_json()
         validate(instance=data, schema=user_schema)
+
+        cursor = db.connection.cursor()
+        # Solo el sec. gral puede operar
+        query = f"select rol from usuario where rut = {data['rut_cuenta']}"
+        cursor.execute(query)
+        if(cursor.fetchone()[0] != 3):
+            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
+
         hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
         query = f"SELECT * FROM usuario where rut = {data['rut']}"
-        cursor = db.connection.cursor()
         cursor.execute(query)
         user = cursor.fetchone()
 
@@ -152,6 +160,14 @@ def actualizar_usuario():
         data = request.get_json()        
         validate(instance=data, schema=user_schema)
         cursor = db.connection.cursor()
+
+        # Solo el sec. gral puede operar
+        query = f"select rol from usuario where rut = {data['rut_cuenta']}"
+        cursor.execute(query)
+        if(cursor.fetchone()[0] != 3):
+            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
+
+
         query = f"SELECT * FROM usuario WHERE rut = {data['rut']}"
         cursor.execute(query)
         user = cursor.fetchone()
