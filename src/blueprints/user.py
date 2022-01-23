@@ -209,7 +209,7 @@ def crear_usuario_compania():
         rol = row[1]
 
         # No es secretario ni secretario gral.
-        if rol not in [3, 7]:
+        if rol not in 7:
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
         # No corresponde la compania
@@ -253,7 +253,7 @@ def actualizar_usuario_compania():
         compania = row[0]
         rol = row[1]
         # No es secretario ni secretario gral.
-        if rol not in [3, 7]:
+        if rol != 7:
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
         if compania != data['compania']:
