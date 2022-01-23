@@ -6,8 +6,8 @@ from src.service.to_json import query_to_json_list, query_to_json
 from extensions import db
 
 
-user = Blueprint('user', __name__)
-user_schema = {
+usuario = Blueprint('usuario', __name__)
+usuario_schema = {
     "type" : "object",
     "properties" : {
         "rut" : {"type" : "number"},
@@ -34,7 +34,7 @@ user_schema = {
                 "fecha_nacimiento", "correo", "activo", "rut_cuenta"]
 }
 
-user_compania_schema = {
+usuario_compania_schema = {
     "type" : "object",
     "properties" : {
         "rut" : {"type" : "number"},
@@ -61,7 +61,7 @@ user_compania_schema = {
                 "fecha_nacimiento", "correo", "activo"]
 }
 
-obt_user_schema = {
+obt_usuario_schema = {
         "type" : "object",
         "properties" : {
             "rut" : {"type" : "number"}
@@ -70,12 +70,12 @@ obt_user_schema = {
 }
 
 
-@user.route('/api/usuario', methods=['POST'])
+@usuario.route('/api/usuario', methods=['POST'])
 #@token_required
 def crear_usuario():
     try:
         data = request.get_json()
-        validate(instance=data, schema=user_schema)
+        validate(instance=data, schema=usuario_schema)
 
         cursor = db.connection.cursor()
         # Solo el sec. gral puede operar
@@ -107,12 +107,12 @@ def crear_usuario():
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
 
 
-@user.route('/api/usuario', methods=['GET'])
+@usuario.route('/api/usuario', methods=['GET'])
 #@token_required
 def obtener_usuario():
     try:
         data = request.get_json()
-        validate(instance=data, schema=obt_user_schema)
+        validate(instance=data, schema=obt_usuario_schema)
         cursor = db.connection.cursor()
         query = f"""select * from usuario where rut = {data['rut']}"""
         cursor.execute(query)
@@ -135,7 +135,7 @@ def obtener_usuario():
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500
 
 
-@user.route('/api/usuarios', methods=['GET'])
+@usuario.route('/api/usuarios', methods=['GET'])
 #@token_required
 def listado_usuarios():
     try:
@@ -153,12 +153,12 @@ def listado_usuarios():
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado.' }), 500
 
 
-@user.route('/api/usuario', methods=['PUT'])
+@usuario.route('/api/usuario', methods=['PUT'])
 #@token_required
 def actualizar_usuario():
     try:
         data = request.get_json()        
-        validate(instance=data, schema=user_schema)
+        validate(instance=data, schema=usuario_schema)
         cursor = db.connection.cursor()
 
         # Solo el sec. gral puede operar
@@ -174,7 +174,7 @@ def actualizar_usuario():
 
         if user:
             data = request.get_json()        
-            validate(instance=data, schema=user_schema)
+            validate(instance=data, schema=usuario_schema)
             hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
             
             query = f"""UPDATE usuario SET compania = {data['compania']}, rol = {data['rol']}, nombre = '{data['nombre']}', 
@@ -195,12 +195,12 @@ def actualizar_usuario():
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
 
 
-@user.route('/api/usuario_compania', methods=['POST'])
+@usuario.route('/api/usuario_compania', methods=['POST'])
 #@token_required
 def crear_usuario_compania():
     try:
         data = request.get_json()
-        validate(instance=data, schema=user_compania_schema)
+        validate(instance=data, schema=usuario_compania_schema)
         query = f"select compania, rol from usuario where rut = {data['rut_cuenta']}"
         cursor = db.connection.cursor()
         cursor.execute(query)
@@ -239,12 +239,12 @@ def crear_usuario_compania():
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
 
 
-@user.route('/api/usuario_compania', methods=['PUT'])
+@usuario.route('/api/usuario_compania', methods=['PUT'])
 #@token_required
 def actualizar_usuario_compania():
     try:
         data = request.get_json()        
-        validate(instance=data, schema=user_schema)
+        validate(instance=data, schema=usuario_schema)
 
         query = f"select compania from usuario where rut = {data['rut_cuenta']}"
         cursor = db.connection.cursor()
@@ -265,7 +265,7 @@ def actualizar_usuario_compania():
 
         if user:
             data = request.get_json()        
-            validate(instance=data, schema=user_schema)
+            validate(instance=data, schema=usuario_schema)
             hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
             
             query = f"""UPDATE usuario SET compania = {data['compania']}, rol = {data['rol']}, nombre = '{data['nombre']}', 
