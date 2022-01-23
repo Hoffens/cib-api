@@ -19,7 +19,8 @@ carro_schema = {
             "format": "date"
         },
         "anio_fabricacion": {"type": "number"},
-        "activo": {"type": "boolean"}
+        "activo": {"type": "boolean"},
+        "usuario_rut": {"type": "number"}
     },
     "required": ["patente", "compania", "modelo", "tipo", "siguiente_mantencion", "activo"]
 }
@@ -50,6 +51,7 @@ carro_compania_schema = {
     "required": ["patente", "compania", "modelo", "tipo", "siguiente_mantencion", "activo", "usuario_rut"]
 }
 
+
 @carro.route('/api/carro', methods=['POST'])
 # @token_required
 def crear_carro():
@@ -57,6 +59,13 @@ def crear_carro():
         data = request.get_json()
         validate(instance=data, schema=carro_schema)
         cursor = db.connection.cursor()
+        query = f"select rol from usuario where rut = {data['usuario_rut']}"
+        cursor.execute(query)
+        rol = cursor.fetchone()[0]
+        if rol != 4:
+            cursor.close()
+            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
+
         query = f"""SELECT * FROM carro WHERE patente = '{data["patente"]}'"""
         cursor.execute(query)
         carro = cursor.fetchone()
@@ -122,6 +131,13 @@ def actualizar_carro():
         data = request.get_json()
         validate(instance=data, schema=carro_schema)
         cursor = db.connection.cursor()
+        query = f"select rol from usuario where rut = {data['usuario_rut']}"
+        cursor.execute(query)
+        rol = cursor.fetchone()[0]
+        if rol != 4:
+            cursor.close()
+            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
+
         query = f"SELECT * FROM carro WHERE patente = \"{data['patente']}\""
         cursor.execute(query)
         carro = cursor.fetchone()
@@ -151,10 +167,18 @@ def crear_carro_compania():
         data = request.get_json()
         validate(instance=data, schema=carro_compania_schema)
         cursor = db.connection.cursor()
-        query = f"""SELECT compania FROM usuario WHERE rut = '{data["usuario_rut"]}'"""
+        query = f"select compania, rol from usuario where rut = {data['usuario_rut']}"
         cursor.execute(query)
-        compania_usuario = cursor.fetchone()[0]
-        if compania_usuario != data['compania']:
+        row = cursor.fetchone()
+        compania = row[0]
+        rol = row[1]
+
+        if rol != 6:
+            cursor.close()
+            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
+
+        if compania != data['compania']:
+            cursor.close()
             return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
 
         query = f"""SELECT * FROM carro WHERE patente = '{data["patente"]}'"""
@@ -180,10 +204,18 @@ def actualizar_carro_compania():
         data = request.get_json()
         validate(instance=data, schema=carro_compania_schema)
         cursor = db.connection.cursor()
-        query = f"""SELECT compania FROM usuario WHERE rut = '{data["usuario_rut"]}'"""
+        query = f"select compania, rol from usuario where rut = {data['usuario_rut']}"
         cursor.execute(query)
-        compania_usuario = cursor.fetchone()[0]
-        if compania_usuario != data['compania']:
+        row = cursor.fetchone()
+        compania = row[0]
+        rol = row[1]
+
+        if rol != 6:
+            cursor.close()
+            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
+
+        if compania != data['compania']:
+            cursor.close()
             return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
 
         query = f"SELECT * FROM carro WHERE patente = \"{data['patente']}\""
