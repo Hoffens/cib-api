@@ -1,12 +1,12 @@
-
 from flask import Blueprint, jsonify, request
 from jsonschema import validate
 from src.service.token_required import token_required
-from src.service.to_json import query_to_json_list
+from src.service.to_json import query_to_json_list, query_to_json
 from extensions import db
 
 
 carro = Blueprint('carro', __name__)
+
 carro_schema = {
     "type": "object",
     "properties": {
@@ -24,10 +24,35 @@ carro_schema = {
     "required": ["patente", "compania", "modelo", "tipo", "siguiente_mantencion", "activo"]
 }
 
+obt_carro_schema = {
+    "type": "object",
+    "properties": {
+        "patente": {"type": "string"},
+    },
+    "required": ["patente"]
+}
 
-@carro.route('/api/carros', methods=['POST'])
+carro_compania_schema = {
+    "type": "object",
+    "properties": {
+        "patente": {"type": "string"},
+        "compania": {"type": "number"},
+        "modelo": {"type": "number"},
+        "tipo": {"type": "number"},
+        "siguiente_mantencion": {
+            "type": "string",
+            "format": "date"
+        },
+        "anio_fabricacion": {"type": "number"},
+        "activo": {"type": "boolean"},
+        "usuario_rut": {"type": "number"}
+    },
+    "required": ["patente", "compania", "modelo", "tipo", "siguiente_mantencion", "activo", "usuario_rut"]
+}
+
+@carro.route('/api/carro', methods=['POST'])
 # @token_required
-def carro_register():
+def crear_carro():
     try:
         data = request.get_json()
         validate(instance=data, schema=carro_schema)
@@ -51,7 +76,7 @@ def carro_register():
 
 @carro.route('/api/carros', methods=['GET'])
 # @token_required
-def obtener_carros():
+def listado_carro():
     try:
         cursor = db.connection.cursor()
         query = f"""SELECT ca.patente, c.nombre as compania, tc.descripcion as 'tipo_carro', mc2.nombre as marca, mc.nombre as modelo, 
@@ -68,14 +93,99 @@ def obtener_carros():
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
 
 
-@carro.route('/api/carros', methods=['PUT'])
+@carro.route('/api/carro', methods=['GET'])
+def obtener_carro():
+    try:
+        data = request.get_json()
+        validate(instance=data, schema=obt_carro_schema)
+        cursor = db.connection.cursor()
+        query = f"""SELECT ca.patente, c.nombre as compania, tc.descripcion as 'tipo_carro', mc2.nombre as marca, mc.nombre as modelo, 
+                ca.anio_fabricacion, ca.siguiente_mantencion, ca.activo FROM carro ca INNER JOIN compania c ON ca.compania = c.numero 
+                INNER JOIN modelo_carro mc ON ca.modelo = mc.id INNER JOIN tipo_carro tc ON ca.tipo = tc.id INNER JOIN marca_carro mc2 
+                ON mc.marca_id = mc2.id WHERE ca.patente = '{data['patente']}'"""
+
+        cursor.execute(query)
+        carro = query_to_json(cursor)
+        cursor.close()
+        return jsonify({'status': 'Ok', 'message': 'carro obtenido correctamente.', 'data': carro}), 200
+
+    except:
+        return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
+
+
+@carro.route('/api/carro', methods=['PUT'])
 #@token_required
-def actualizar_ads():
+def actualizar_carro():
     try:
         data = request.get_json()
         validate(instance=data, schema=carro_schema)
         cursor = db.connection.cursor()
         query = f"SELECT * FROM carro WHERE patente = \"{data['patente']}\""
+        cursor.execute(query)
+        carro = cursor.fetchone()
+
+        if carro:
+            query = f"""UPDATE carro SET patente = '{data['patente']}', compania = {data['compania']}, modelo = {data['modelo']},
+                    tipo = {data['tipo']}, siguiente_mantencion = '{data['siguiente_mantencion']}', anio_fabricacion = {data['anio_fabricacion']}, activo = {data['activo']} WHERE patente = '{data['patente']}';"""
+
+            cursor.execute(query)
+            db.connection.commit()
+            cursor.close()
+
+            return jsonify(
+                {'status': 'Ok', 'message': 'Carro actualizado correctamente.'}), 200
+
+        return jsonify({'status': 'Ok', 'message': 'No existe carro con esa patente'}), 404
+
+    except BaseException:
+        return jsonify(
+            {'status': 'Error', 'message': 'Error inesperado, verifique que la información cargada sea correcta.'}), 500
+
+
+@carro.route('/api/carro_compania', methods=['POST'])
+# @token_required
+def crear_carro_compania():
+    try:
+        data = request.get_json()
+        validate(instance=data, schema=carro_compania_schema)
+        cursor = db.connection.cursor()
+        query = f"""SELECT compania FROM usuario WHERE rut = '{data["usuario_rut"]}'"""
+        cursor.execute(query)
+        compania_usuario = cursor.fetchone()[0]
+        if compania_usuario != data['compania']:
+            return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
+
+        query = f"""SELECT * FROM carro WHERE patente = '{data["patente"]}'"""
+        cursor.execute(query)
+        carro = cursor.fetchone()
+
+        if carro is None:
+            query = f"""INSERT INTO carro (patente, compania, modelo, tipo, siguiente_mantencion, anio_fabricacion, activo) values ('{data['patente']}', 
+                    {data['compania']}, {data['modelo']}, {data['tipo']}, '{data['siguiente_mantencion']}', {data['anio_fabricacion']}, {data['activo']})"""
+            cursor.execute(query)
+            db.connection.commit()
+            cursor.close()
+            return jsonify({'status': 'Ok', 'message': 'Carro creado correctamente.'}), 200
+
+    except:
+        return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
+
+
+@carro.route('/api/carro_compania', methods=['PUT'])
+#@token_required
+def actualizar_carro_compania():
+    try:
+        data = request.get_json()
+        validate(instance=data, schema=carro_compania_schema)
+        cursor = db.connection.cursor()
+        query = f"""SELECT compania FROM usuario WHERE rut = '{data["usuario_rut"]}'"""
+        cursor.execute(query)
+        compania_usuario = cursor.fetchone()[0]
+        if compania_usuario != data['compania']:
+            return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
+
+        query = f"SELECT * FROM carro WHERE patente = \"{data['patente']}\""
+
         cursor.execute(query)
         carro = cursor.fetchone()
 
