@@ -5,6 +5,8 @@ def query_to_json_list(cursor):
 def query_to_json(cursor):
     row = cursor.fetchone()
     d = {}
+    if row is None:
+        return None
     for i in range(len(row)):
         d[cursor.description[i][0]] = row[i]
     return d
