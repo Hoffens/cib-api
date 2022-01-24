@@ -182,7 +182,7 @@ def crear_usuario_compania():
         rol = row[1]
 
         # No es secretario ni secretario gral.
-        if rol not in 7:
+        if rol != 7:
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
         # No corresponde la compania
@@ -219,7 +219,7 @@ def actualizar_usuario_compania():
         data = request.get_json()        
         validate(instance=data, schema=usuario_schema)
 
-        query = f"select compania from usuario where rut = {data['rut_cuenta']}"
+        query = f"select compania, rol from usuario where rut = {data['rut_cuenta']}"
         cursor = db.connection.cursor()
         cursor.execute(query)
         row = cursor.fetchone()
