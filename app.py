@@ -26,6 +26,7 @@ def register_blueprints(app):
     from src.blueprints.herramienta import herramienta
     from src.blueprints.tipo_carro import tipo_carro
     from src.blueprints.modelo_carro import modelo_carro
+    from src.blueprints.marca_carro import marca_carro
     from src.blueprints.grupo_sanguineo import grupo_sanguineo
 
     app.register_blueprint(auth)    
@@ -37,6 +38,7 @@ def register_blueprints(app):
     app.register_blueprint(herramienta)
     app.register_blueprint(tipo_carro)
     app.register_blueprint(modelo_carro)
+    app.register_blueprint(marca_carro)
     app.register_blueprint(grupo_sanguineo)
 
 
