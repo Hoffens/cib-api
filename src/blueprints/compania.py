@@ -58,6 +58,7 @@ def crear_compania():
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
+
         query = f"""INSERT INTO compania (nombre, ubicacion, telefono, activo) values ('{data['nombre']}', 
                 '{data['ubicacion']}', '{data['telefono']}', {data['activo']})"""
         cursor.execute(query)
