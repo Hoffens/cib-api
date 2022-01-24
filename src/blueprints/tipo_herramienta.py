@@ -21,7 +21,7 @@ actualizar_tipo_herramienta_schema = {
         "nombre": {"type": "string"},
         "rut_usuario": {"type": "number"}
     },
-    "required": ["nombre", "rut_usuario"]
+    "required": ["id", "nombre", "rut_usuario"]
 }
 
 
