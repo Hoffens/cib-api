@@ -57,7 +57,7 @@ def obtener_carros():
         query = f"""SELECT ca.patente, c.nombre as compania, tc.descripcion as 'tipo_carro', mc2.nombre as marca, mc.nombre as modelo, 
                 ca.anio_fabricacion, ca.siguiente_mantencion, ca.activo FROM carro ca INNER JOIN compania c ON ca.compania = c.numero 
                 INNER JOIN modelo_carro mc ON ca.modelo = mc.id INNER JOIN tipo_carro tc ON ca.tipo = tc.id INNER JOIN marca_carro mc2 
-                ON mc.marca_id = mc2.id"""
+                ON mc.marca_id = mc2.id ORDER BY c.numero"""
         cursor.execute(query)
         carros_json = query_to_json_list(cursor)
         cursor.close()
