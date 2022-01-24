@@ -48,13 +48,19 @@ def crear_herramienta():
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
-        query = f"""INSERT INTO herramienta (serie, nombre, descripcion, carro, compania, tipo, activo) values ('{data['serie']}', 
-                '{data['nombre']}', '{data['descripcion']}', '{data['carro']}', {data['compania']}, {data['tipo']}, {data['activo']});"""
+        query = f"select * from herramienta where serie = '{data['serie']}'"
         cursor.execute(query)
-        db.connection.commit()
-        cursor.close()
+        herramienta = query_to_json(cursor)
+         
+        if herramienta is None:
+            query = f"""INSERT INTO herramienta (serie, nombre, descripcion, carro, compania, tipo, activo) values ('{data['serie']}', 
+                    '{data['nombre']}', '{data['descripcion']}', '{data['carro']}', {data['compania']}, {data['tipo']}, {data['activo']});"""
+            cursor.execute(query)
+            db.connection.commit()
+            cursor.close()
 
-        return jsonify({'status': 'Ok', 'message': 'herramienta creada correctamente.'}), 200
+            return jsonify({'status': 'Ok', 'message': 'herramienta creada correctamente.'}), 200
+        return jsonify({'status': 'Error', 'message': 'Ya existe una herramienta con ese numero de serie'}), 500
 
     except:
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
@@ -161,13 +167,20 @@ def crear_herramienta_compania():
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
 
-        query = f"""INSERT INTO herramienta (serie, nombre, descripcion, carro, compania, tipo, activo) values ('{data['serie']}', 
-                '{data['nombre']}', '{data['descripcion']}', '{data['carro']}', {data['compania']}, {data['tipo']}, {data['activo']})"""
-        cursor.execute(query)
-        db.connection.commit()
-        cursor.close()
 
-        return jsonify({'status': 'Ok', 'message': 'Herramienta creada correctamente.'}), 200
+        query = f"select * from herramienta where serie = '{data['serie']}'"
+        cursor.execute(query)
+        herramienta = query_to_json(cursor)
+
+        if herramienta is None:
+            query = f"""INSERT INTO herramienta (serie, nombre, descripcion, carro, compania, tipo, activo) values ('{data['serie']}', 
+                    '{data['nombre']}', '{data['descripcion']}', '{data['carro']}', {data['compania']}, {data['tipo']}, {data['activo']})"""
+            cursor.execute(query)
+            db.connection.commit()
+            cursor.close()
+
+            return jsonify({'status': 'Ok', 'message': 'Herramienta creada correctamente.'}), 200
+        return jsonify({'status': 'Error', 'message': 'Ya existe una herramienta con ese numero de serie.'}), 500
 
     except:
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
