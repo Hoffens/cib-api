@@ -18,18 +18,20 @@ def register_extensions(app):
 
 def register_blueprints(app):
     from src.blueprints.auth import auth
-    from src.blueprints.user import user
+    from src.blueprints.usuario import usuario
     from src.blueprints.compania import compania
     from src.blueprints.rol import rol
-    from src.blueprints.ads import ads
+    from src.blueprints.acto import acto
     from src.blueprints.carro import carro
+    from src.blueprints.herramienta import herramienta
 
     app.register_blueprint(auth)    
-    app.register_blueprint(user)
+    app.register_blueprint(usuario)
     app.register_blueprint(compania)    
     app.register_blueprint(rol)
-    app.register_blueprint(ads)
+    app.register_blueprint(acto)
     app.register_blueprint(carro)
+    app.register_blueprint(herramienta)
 
 
 if __name__ == '__main__':
