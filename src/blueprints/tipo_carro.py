@@ -75,7 +75,7 @@ def listado_tipo_carro():
             {'status': 'Error', 'message': 'Error inesperado.'}), 500
 
 
-@tipo_caro.route('/api/tipo_carro', methods=['PUT'])
+@tipo_carro.route('/api/tipo_carro', methods=['PUT'])
 #@token_required
 def actualizar_tipo_carro():
     try:
