@@ -2,7 +2,7 @@ import bcrypt
 from flask import Blueprint, jsonify, request
 from jsonschema import validate
 from src.service.token_required import token_required
-from src.service.to_json import query_to_json_list
+from src.service.to_json import query_to_json_list, query_to_json
 from extensions import db
 
 
