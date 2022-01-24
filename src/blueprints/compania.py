@@ -22,7 +22,7 @@ crear_compania_schema = {
 actualizar_compania_schema = {
     "type": "object",
     "properties": {
-        "numero": {"type": "numero"},
+        "numero": {"type": "number"},
         "nombre": {"type": "string"},
         "ubicacion": {"type": "string"},
         "telefono": {"type": "string"},
@@ -54,7 +54,7 @@ def crear_compania():
         rol = cursor.fetchone()[0]
 
         # No es intendente gral.
-        if rol != 4:
+        if rol != 3:
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
@@ -84,17 +84,18 @@ def actualizar_compania():
         rol = cursor.fetchone()[0]
 
         # No es intendente gral.
-        if rol != 4:
+        if rol != 3:
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
-        query = f"SELECT * FROM compania WHERE numero = \"{data['numero']}\""
+        query = f"SELECT * FROM compania WHERE numero = {data['numero']}"
         cursor.execute(query)
         carro = cursor.fetchone()
 
         if carro:
             query = f"""UPDATE compania SET numero = {data['numero']}, nombre = '{data['nombre']}', ubicacion = '{data['ubicacion']}',
-                    telefono = '{data['tipo']}', activo = {data['activo']} WHERE numero = {data['numero']};"""
+                    telefono = '{data['telefono']}', activo = {data['activo']} WHERE numero = {data['numero']};"""
+
 
             cursor.execute(query)
             db.connection.commit()
@@ -148,41 +149,6 @@ def listado_companias():
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
 
 
-@compania.route('/api/compania_compania', methods=['POST'])
-#@token_required
-def crear_compania_compania():
-    try:
-        data = request.get_json()
-        validate(instance=data, schema=crear_compania_schema)
-
-        query = f"select rol, compania from usuario where rut = {data['rut_cuenta']}"
-        cursor = db.connection.cursor()
-        cursor.execute(query)
-        row = cursor.fetchone()
-        rol = row[0]
-        compania = row[1]
-
-        # No es intendente gral.
-        if rol != 7:
-            cursor.close()
-            return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
-
-        if compania != data['compania']:
-            cursor.close()
-            return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
-
-        query = f"""INSERT INTO compania (nombre, ubicacion, telefono, activo) values ('{data['nombre']}', 
-                '{data['ubicacion']}', '{data['telefono']}', {data['activo']})"""
-        cursor.execute(query)
-        db.connection.commit()
-        cursor.close()
-
-        return jsonify({'status': 'Ok', 'message': 'Compania creada correctamente.'}), 200
-
-    except:
-        return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
-
-
 @compania.route('/api/compania_compania', methods=['PUT'])
 #@token_required
 def actualizar_compania_compania():
@@ -202,26 +168,24 @@ def actualizar_compania_compania():
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
-        if compania != data['compania']:
+        if compania != data['numero']:
             cursor.close()
             return jsonify({'status': 'Error', 'message': 'Compañia invalida.'}), 500
 
-        query = f"SELECT * FROM compania WHERE numero = \"{data['numero']}\""
+        query = f"SELECT * FROM compania WHERE numero = {data['numero']}"
         cursor.execute(query)
-        carro = cursor.fetchone()
+        compania = cursor.fetchone()
 
-        if carro:
+        if compania:
             query = f"""UPDATE compania SET numero = {data['numero']}, nombre = '{data['nombre']}', ubicacion = '{data['ubicacion']}',
-                    telefono = '{data['tipo']}', activo = {data['activo']} WHERE numero = {data['numero']};"""
+                    telefono = '{data['telefono']}', activo = {data['activo']} WHERE numero = {data['numero']};"""
 
             cursor.execute(query)
             db.connection.commit()
             cursor.close()
 
             return jsonify(
-                {'status': 'Ok', 'message': 'Compania creada correctamente.'}), 200
-
-        return jsonify({'status': 'Ok', 'message': 'No existe compania con ese numero'}), 404
+                {'status': 'Ok', 'message': 'Compania actualizada correctamente.'}), 200
 
     except BaseException:
         return jsonify(
