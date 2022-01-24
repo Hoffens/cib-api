@@ -24,6 +24,7 @@ def register_blueprints(app):
     from src.blueprints.acto import acto
     from src.blueprints.carro import carro
     from src.blueprints.herramienta import herramienta
+    from src.blueprints.tipo_carro import tipo_carro
 
     app.register_blueprint(auth)    
     app.register_blueprint(usuario)
@@ -32,6 +33,7 @@ def register_blueprints(app):
     app.register_blueprint(acto)
     app.register_blueprint(carro)
     app.register_blueprint(herramienta)
+    app.register_blueprint(tipo_carro)
 
 
 if __name__ == '__main__':
