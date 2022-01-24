@@ -34,33 +34,6 @@ usuario_schema = {
                 "fecha_nacimiento", "correo", "activo", "rut_cuenta"]
 }
 
-usuario_compania_schema = {
-    "type" : "object",
-    "properties" : {
-        "rut" : {"type" : "number"},
-        "password" : {"type" : "string"},
-        "compania" : {"type" : "number"},
-        "nombre" : {"type" : "string"},
-        "apellido_paterno" : {"type" : "string"},
-        "apellido_materno" : {"type" : "string"},
-        "fecha_nacimiento": {
-            "type": "string",
-            "format": "date"
-        },
-        "correo" : {"type" : "string"},
-        "telefono" : {"type" : "string"},
-        "fecha_ingreso": {
-            "type": "string",
-            "format": "date"
-        },
-        "grupo_sanguineo" : {"type" : "number"},
-        "activo" : {"type" : "boolean"},
-        "rut_cuenta": {"type" : "number"}
-    },
-    "required": ["rut", "password", "compania", "nombre", "apellido_paterno", "apellido_materno",
-                "fecha_nacimiento", "correo", "activo"]
-}
-
 obt_usuario_schema = {
         "type" : "object",
         "properties" : {
@@ -200,7 +173,7 @@ def actualizar_usuario():
 def crear_usuario_compania():
     try:
         data = request.get_json()
-        validate(instance=data, schema=usuario_compania_schema)
+        validate(instance=data, schema=usuario_schema)
         query = f"select compania, rol from usuario where rut = {data['rut_cuenta']}"
         cursor = db.connection.cursor()
         cursor.execute(query)
