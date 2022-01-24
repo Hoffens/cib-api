@@ -16,7 +16,7 @@ crear_compania_schema = {
         "activo": {"type": "boolean"},
         "rut_cuenta": {"type": "number"}
     },
-    "required": ["nombre", "ubicacion", "telefono", "activo"]
+    "required": ["nombre", "ubicacion", "telefono", "activo", "rut_cuenta"]
 }
 
 actualizar_compania_schema = {
@@ -29,7 +29,7 @@ actualizar_compania_schema = {
         "activo": {"type": "boolean"},
         "rut_cuenta" : {"type": "number"}
     },
-    "required": ["numero", "nombre", "ubicacion", "telefono", "activo"]
+    "required": ["numero", "nombre", "ubicacion", "telefono", "activo", "rut_cuenta"]
 }
 
 obt_compania_schema = {
