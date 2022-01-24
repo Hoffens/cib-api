@@ -58,8 +58,8 @@ def crear_carro():
             cursor.execute(query)
             db.connection.commit()
             cursor.close()
-
-        return jsonify({'status': 'Ok', 'message': 'Carro creado correctamente.'}), 200
+            return jsonify({'status': 'Ok', 'message': 'Carro creado correctamente.'}), 200
+        return jsonify({'status': 'Error', 'message': 'Ese carro ya existe.'}), 500
 
     except:
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
@@ -174,6 +174,7 @@ def crear_carro_compania():
             db.connection.commit()
             cursor.close()
             return jsonify({'status': 'Ok', 'message': 'Carro creado correctamente.'}), 200
+        return jsonify({'status': 'Ok', 'message': 'Ese carro ya existe.'}), 500
 
     except:
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
