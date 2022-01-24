@@ -44,7 +44,7 @@ def crear_tipo_carro():
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
 
-        query = f"""INSERT INTO tipo_caro (nombre, descripcion) VALUES ('{data['nombre']}', '{data['descripcion']}');"""
+        query = f"""INSERT INTO tipo_caro (abreviacion, descripcion) VALUES ('{data['abreviacion']}', '{data['descripcion']}');"""
         cursor.execute(query)
         db.connection.commit()
         cursor.close()
@@ -62,7 +62,7 @@ def crear_tipo_carro():
 def listado_tipo_carro():
     try:
         cursor = db.connection.cursor()
-        query = f"""SELECT id, nombre, descripcion from tipo_carro"""
+        query = f"""SELECT id, abreviacion, descripcion from tipo_carro"""
         cursor.execute(query)
         tipo_carro_json = query_to_json_list(cursor)
         cursor.close()
