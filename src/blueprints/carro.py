@@ -7,24 +7,6 @@ from extensions import db
 
 carro = Blueprint('carro', __name__)
 
-carro_schema = {
-    "type": "object",
-    "properties": {
-        "patente": {"type": "string"},
-        "compania": {"type": "number"},
-        "modelo": {"type": "number"},
-        "tipo": {"type": "number"},
-        "siguiente_mantencion": {
-            "type": "string",
-            "format": "date"
-        },
-        "anio_fabricacion": {"type": "number"},
-        "activo": {"type": "boolean"},
-        "usuario_rut": {"type": "number"}
-    },
-    "required": ["patente", "compania", "modelo", "tipo", "siguiente_mantencion", "activo"]
-}
-
 obt_carro_schema = {
     "type": "object",
     "properties": {
@@ -33,7 +15,7 @@ obt_carro_schema = {
     "required": ["patente"]
 }
 
-carro_compania_schema = {
+carro_schema = {
     "type": "object",
     "properties": {
         "patente": {"type": "string"},
@@ -165,7 +147,7 @@ def actualizar_carro():
 def crear_carro_compania():
     try:
         data = request.get_json()
-        validate(instance=data, schema=carro_compania_schema)
+        validate(instance=data, schema=carro_schema)
         cursor = db.connection.cursor()
         query = f"select compania, rol from usuario where rut = {data['usuario_rut']}"
         cursor.execute(query)
@@ -202,7 +184,7 @@ def crear_carro_compania():
 def actualizar_carro_compania():
     try:
         data = request.get_json()
-        validate(instance=data, schema=carro_compania_schema)
+        validate(instance=data, schema=carro_schema)
         cursor = db.connection.cursor()
         query = f"select compania, rol from usuario where rut = {data['usuario_rut']}"
         cursor.execute(query)
