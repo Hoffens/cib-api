@@ -22,10 +22,6 @@ usuario_schema = {
         },
         "correo" : {"type" : "string"},
         "telefono" : {"type" : "string"},
-        "fecha_ingreso": {
-            "type": "string",
-            "format": "date"
-        },
         "grupo_sanguineo" : {"type" : "number"},
         "activo" : {"type" : "boolean"},
         "rut_cuenta": {"type": "number"}
@@ -76,7 +72,7 @@ def crear_usuario():
             query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo, telefono,
                     fecha_ingreso, grupo_sanguineo, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', '{data['telefono']}', date('{data['fecha_ingreso']}'), {data['grupo_sanguineo']}, 
+                    '{data['correo']}', '{data['telefono']}', CURDATE(), {data['grupo_sanguineo']}, 
                     '{hashed_password.decode('utf-8')}', 1);"""
             cursor.execute(query)
             db.connection.commit()
