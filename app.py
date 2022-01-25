@@ -19,19 +19,35 @@ def register_extensions(app):
 def register_blueprints(app):
     from src.blueprints.auth import auth
     from src.blueprints.usuario import usuario
+    from src.blueprints.usuario_compania import usuario_compania
+    from src.blueprints.perfil_usuario import perfil_usuario
     from src.blueprints.compania import compania
     from src.blueprints.rol import rol
     from src.blueprints.acto import acto
     from src.blueprints.carro import carro
     from src.blueprints.herramienta import herramienta
+    from src.blueprints.tipo_carro import tipo_carro
+    from src.blueprints.modelo_carro import modelo_carro
+    from src.blueprints.marca_carro import marca_carro
+    from src.blueprints.tipo_herramienta import tipo_herramienta
+    from src.blueprints.apodo_herramienta import apodo_herramienta
+    from src.blueprints.grupo_sanguineo import grupo_sanguineo
 
     app.register_blueprint(auth)    
     app.register_blueprint(usuario)
+    app.register_blueprint(usuario_compania)
+    app.register_blueprint(perfil_usuario)
     app.register_blueprint(compania)    
     app.register_blueprint(rol)
     app.register_blueprint(acto)
     app.register_blueprint(carro)
     app.register_blueprint(herramienta)
+    app.register_blueprint(tipo_carro)
+    app.register_blueprint(modelo_carro)
+    app.register_blueprint(marca_carro)
+    app.register_blueprint(tipo_herramienta)
+    app.register_blueprint(apodo_herramienta)
+    app.register_blueprint(grupo_sanguineo)
 
 
 if __name__ == '__main__':
