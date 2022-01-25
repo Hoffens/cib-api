@@ -25,7 +25,7 @@ def login():
         datos = cursor.fetchone()
 
         if datos and bcrypt.checkpw(passwordUsuario, datos[11].encode('utf-8')):
-            query = f"""SELECT u.rut, u.nombre, u.apellido_paterno, u.apellido_materno, c.nombre, r.id FROM usuario u 
+            query = f"""SELECT u.rut, u.nombre, u.apellido_paterno, u.apellido_materno, c.numero, r.id FROM usuario u 
                     INNER JOIN compania c ON u.compania = c.numero INNER JOIN rol r ON u.rol = r.id WHERE u.rut = {rutUsuario} 
                     and u.activo = true"""
             print(query)
