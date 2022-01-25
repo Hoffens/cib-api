@@ -96,7 +96,7 @@ def crear_usuario():
             cursor.execute(query)
             db.connection.commit()
 
-            if "telefono" in data:
+            if "telefono" in data and "grupo_sanguineo" not in data:
                 query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                         fecha_ingreso, u_password, activo, telefono) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                         '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
@@ -104,7 +104,7 @@ def crear_usuario():
                 cursor.execute(query)
                 db.connection.commit()
 
-            elif "grupo_sanguineo" in data:
+            elif "grupo_sanguineo" in data and "telefono" not in data:
                 query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                         fecha_ingreso, u_password, activo, grupo_sanguineo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                         '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
@@ -112,6 +112,13 @@ def crear_usuario():
                 cursor.execute(query)
                 db.connection.commit()
 
+            elif "grupo_sanguineo" in data and "telefono" in data:
+                query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
+                        fecha_ingreso, u_password, activo, telefono, grupo_sanguineo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
+                        '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
+                        '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, '{data["telefono"]}', {data['grupo_sanguineo']});"""
+                cursor.execute(query)
+                db.connection.commit()
             else:
                 query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                         fecha_ingreso, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
