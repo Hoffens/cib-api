@@ -22,7 +22,7 @@ crear_usuario_schema = {
         },
         "correo": {"type": "string"},
         "telefono": {"type": "string"},
-        "grupo_sanguineo": {"type": "number"},
+        "grupo_sanguineo": {"type": ["number", "string"]},
         "activo": {"type": "boolean"},
         "rut_cuenta": {"type": "number"}
     },
@@ -60,7 +60,7 @@ actualizar_usuario_schema = {
         },
         "correo": {"type": "string"},
         "telefono": {"type": "string"},
-        "grupo_sanguineo": {"type": "number"},
+        "grupo_sanguineo": {"type": ["number", "string"]},
         "activo": {"type": "boolean"},
         "rut_cuenta": {"type": "number"}
     }
@@ -70,7 +70,7 @@ actualizar_usuario_schema = {
 @usuario.route('/api/usuario', methods=['POST'])
 #@token_required
 def crear_usuario():
-    try:
+    #try:
         data = request.get_json()
         validate(instance=data, schema=crear_usuario_schema)
 
@@ -88,10 +88,13 @@ def crear_usuario():
         user = cursor.fetchone()
 
         if user is None:
+            if len(data['grupo_sanguineo']) == 0:
+                data['grupo_sanguineo'] = 'null'
             query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                     fecha_ingreso, u_password, activo, grupo_sanguineo, telefono) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, {data['grupo_sanguineo']}), '{data['telefono']}';"""
+                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, {data['grupo_sanguineo']}, '{data['telefono']}');"""
+            print(query)
             cursor.execute(query)
             db.connection.commit()
 
@@ -100,8 +103,8 @@ def crear_usuario():
 
         return jsonify({'status': 'Error', 'message': 'Usuario ya existe.'}), 422
 
-    except:
-        return jsonify({'status': 'Error', 'message': 'Error inesperado, verifique que la información cargada sea correcta.'}), 500
+    #except:
+    #    return jsonify({'status': 'Error', 'message': 'Error inesperado, verifique que la información cargada sea correcta.'}), 500
 
 
 @usuario.route('/api/usuarios', methods=['GET'])
