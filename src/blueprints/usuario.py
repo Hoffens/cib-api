@@ -81,8 +81,7 @@ def crear_usuario():
         if(cursor.fetchone()[0] != 3):
             return jsonify({'status': 'Error', 'message': 'Permisos insuficientes.'}), 500
 
-        hashed_password = bcrypt.hashpw(
-            data['password'].encode("utf-8"), bcrypt.gensalt())
+        hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
         query = f"SELECT * FROM usuario where rut = {data['rut']}"
         cursor.execute(query)
         user = cursor.fetchone()
@@ -141,63 +140,11 @@ def actualizar_usuario():
         user = cursor.fetchone()
 
         if user:
-            if 'password' in data:
-                hashed_password = bcrypt.hashpw(
-                    data['password'].encode("utf-8"), bcrypt.gensalt())
-                query = f"update usuario set password = '{hashed_password.decode('utf-8')}' where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
 
-            if 'compania' in data:
-                query = f"update usuario set compania = {data['compania']} where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'rol' in data:
-                query = f"update usuario set rol = {data['rol']} where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'nombre' in data:
-                query = f"update usuario set nombre = '{data['nombre']} where rut = {data['rut']}'"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'apellido_paterno' in data:
-                query = f"update usuario set apellido_paterno = '{data['apellido_paterno']}' where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'apellido_materno' in data:
-                query = f"update usuario set apellido_materno = '{data['apellido_materno']}' where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'fecha_nacimiento' in data:
-                query = f"update usuario set fecha_nacimiento = '{data['fecha_nacimiento']}' where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'correo' in data:
-                query = f"update usuario set correo = '{data['correo']}' where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'telefono' in data:
-                query = f"update usuario set telefono = '{data['telefono']}' where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'grupo_sanguineo' in data:
-                query = f"update usuario set grupo_sanguineo = {data['grupo_sanguineo']} where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
-            if 'activo' in data:
-                query = f"update usuario set activo = {data['activo']} where rut = {data['rut']}"
-                cursor.execute(query)
-                db.connection.commit()
-
+            hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
+            query = f"""UPDATE usuario set rut = {data['rut']}, u_password = '{hashed_password.decode('utf-8')}', compania = {data['compania']}, rol = {data['rol']}, nombre = '{data['nombre']}', apellido_paterno = '{data['apellido_paterno']}', apellido_materno = '{data['apellido_materno']}', fecha_nacimiento = '{data['fecha_nacimiento']}', correo = '{data['correo']}', telefono = '{data['telefono']}', grupo_sanguineo = %s, activo = {data['activo']} where rut = {data['rut']};"""
+            cursor.execute(query, (data['grupo_sanguineo'], ))
+            db.connection.commit()
             cursor.close()
 
             return jsonify({'status': 'Ok', 'message': 'Usuario actualizado correctamente.'}), 200
