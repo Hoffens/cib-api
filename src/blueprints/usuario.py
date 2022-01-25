@@ -26,7 +26,7 @@ usuario_schema = {
             "type": "string",
             "format": "date"
         },
-        "grupo_sanguineo" : {"type" : "number"},
+        "grupo_sanguineo" : {"type" : ["number", "null"]},
         "activo" : {"type" : "boolean"},
         "rut_cuenta": {"type": "number"}
     },
