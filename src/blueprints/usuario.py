@@ -13,6 +13,7 @@ usuario_schema = {
         "rut" : {"type" : "number"},
         "password" : {"type" : "string"},
         "compania" : {"type" : "number"},
+        "rol": {"type" : "number"},
         "nombre" : {"type" : "string"},
         "apellido_paterno" : {"type" : "string"},
         "apellido_materno" : {"type" : "string"},
@@ -68,17 +69,35 @@ def crear_usuario():
         cursor.execute(query)
         user = cursor.fetchone()
 
+
         if user is None:
-            query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo, telefono,
-                    fecha_ingreso, grupo_sanguineo, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
+            # Se ingresa la informacion obligatoria
+            query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
+                    fecha_ingreso, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', '{data['telefono']}', CURDATE(), {data['grupo_sanguineo']}, 
-                    '{hashed_password.decode('utf-8')}', 1);"""
+                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1);"""
             cursor.execute(query)
             db.connection.commit()
-            cursor.close()
 
+            try:
+                if data["telefono"]:
+                    query = f"insert into usuario (telefono) values ('{data['telefono']}');"
+                    cursor.execute(query)
+                    db.connection.commit()
+            except:
+                pass
+
+            try:
+                if data["grupo_sanguineo"]:
+                    query = f"insert into usuario (grupo_sanguineo) values ({data['grupo_sanguineo']});"
+                    cursor.execute(query)
+                    db.connection.commit()
+            except:
+                pass
+
+            cursor.close()
             return jsonify({ 'status': 'Ok', 'message' : 'Usuario creado correctamente.' }), 200
+
 
         return jsonify({ 'status': 'Error', 'message' : 'Usuario ya existe.' }), 422
         
@@ -121,7 +140,7 @@ def listado_usuarios():
         cursor = db.connection.cursor()
         query = f"""SELECT u.rut, c.nombre as compania, r.nombre as rol, u.nombre, u.apellido_paterno, u.apellido_materno, u.fecha_nacimiento, 
                 u.correo, u.telefono, u.fecha_ingreso, gs.tipo as grupo_sanguineo, u.activo FROM usuario u INNER JOIN compania c ON u.compania = 
-                c.numero INNER JOIN rol r ON r.id = u.rol INNER JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
+                c.numero INNER JOIN rol r ON r.id = u.rol LEFT JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
         cursor.execute(query)
         users_json = query_to_json_list(cursor)
         cursor.close()
@@ -201,15 +220,31 @@ def crear_usuario_compania():
         user = cursor.fetchone()
 
         if user is None:
-            query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo, telefono,
-                    fecha_ingreso, grupo_sanguineo, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
+            # Se ingresa la informacion obligatoria
+            query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
+                    fecha_ingreso, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', '{data['telefono']}', date('{data['fecha_ingreso']}'), {data['grupo_sanguineo']}, 
-                    '{hashed_password.decode('utf-8')}', 1);"""
+                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1);"""
             cursor.execute(query)
             db.connection.commit()
-            cursor.close()
 
+            try:
+                if data["telefono"]:
+                    query = f"insert into usuario (telefono) values ('{data['telefono']}');"
+                    cursor.execute(query)
+                    db.connection.commit()
+            except:
+                pass
+
+            try:
+                if data["grupo_sanguineo"]:
+                    query = f"insert into usuario (grupo_sanguineo) values ({data['grupo_sanguineo']});"
+                    cursor.execute(query)
+                    db.connection.commit()
+            except:
+                pass
+
+            cursor.close()
             return jsonify({ 'status': 'Ok', 'message' : 'Usuario creado correctamente.' }), 200
 
         return jsonify({ 'status': 'Error', 'message' : 'Usuario ya existe.' }), 422
