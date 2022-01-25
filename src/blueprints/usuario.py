@@ -88,14 +88,6 @@ def crear_usuario():
         user = cursor.fetchone()
 
         if user is None:
-            # Se ingresa la informacion obligatoria
-            query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
-                    fecha_ingreso, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
-                    '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1);"""
-            cursor.execute(query)
-            db.connection.commit()
-
             if "telefono" in data and "grupo_sanguineo" not in data:
                 query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                         fecha_ingreso, u_password, activo, telefono) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
