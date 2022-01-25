@@ -112,7 +112,7 @@ def crear_usuario():
                 cursor.execute(query)
                 db.connection.commit()
 
-            else
+            else:
                 query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                         fecha_ingreso, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                         '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
@@ -170,57 +170,57 @@ def actualizar_usuario():
             if 'password' in data:
                 hashed_password = bcrypt.hashpw(
                     data['password'].encode("utf-8"), bcrypt.gensalt())
-                query = f"update usuario set password = '{hashed_password.decode('utf-8')}'"
+                query = f"update usuario set password = '{hashed_password.decode('utf-8')}' where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'compania' in data:
-                query = f"update usuario set compania = {data['compania']}"
+                query = f"update usuario set compania = {data['compania']} where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'rol' in data:
-                query = f"update usuario set rol = {data['rol']}"
+                query = f"update usuario set rol = {data['rol']} where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'nombre' in data:
-                query = f"update usuario set nombre = '{data['nombre']}'"
+                query = f"update usuario set nombre = '{data['nombre']} where rut = {data['rut']}'"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'apellido_paterno' in data:
-                query = f"update usuario set apellido_paterno = '{data['apellido_paterno']}'"
+                query = f"update usuario set apellido_paterno = '{data['apellido_paterno']}' where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'apellido_materno' in data:
-                query = f"update usuario set apellido_materno = '{data['apellido_materno']}'"
+                query = f"update usuario set apellido_materno = '{data['apellido_materno']}' where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'fecha_nacimiento' in data:
-                query = f"update usuario set fecha_nacimiento = '{data['fecha_nacimiento']}'"
+                query = f"update usuario set fecha_nacimiento = '{data['fecha_nacimiento']}' where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'correo' in data:
-                query = f"update usuario set correo = '{data['correo']}'"
+                query = f"update usuario set correo = '{data['correo']}' where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'telefono' in data:
-                query = f"update usuario set telefono = '{data['telefono']}'"
+                query = f"update usuario set telefono = '{data['telefono']}' where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'grupo_sanguineo' in data:
-                query = f"update usuario set grupo_sanguineo = {data['grupo_sanguineo']}"
+                query = f"update usuario set grupo_sanguineo = {data['grupo_sanguineo']} where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
             if 'activo' in data:
-                query = f"update usuario set activo = {data['activo']}"
+                query = f"update usuario set activo = {data['activo']} where rut = {data['rut']}"
                 cursor.execute(query)
                 db.connection.commit()
 
