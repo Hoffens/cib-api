@@ -22,7 +22,7 @@ crear_usuario_schema = {
         },
         "correo": {"type": "string"},
         "telefono": {"type": "string"},
-        "grupo_sanguineo": {"type": ["number", "string"]},
+        "grupo_sanguineo": {"type": ["number", "null"]},
         "activo": {"type": "boolean"},
         "rut_cuenta": {"type": "number"}
     },
@@ -60,7 +60,7 @@ actualizar_usuario_schema = {
         },
         "correo": {"type": "string"},
         "telefono": {"type": "string"},
-        "grupo_sanguineo": {"type": ["number", "string"]},
+        "grupo_sanguineo": {"type": ["number", "null"]},
         "activo": {"type": "boolean"},
         "rut_cuenta": {"type": "number"}
     }
@@ -88,14 +88,11 @@ def crear_usuario():
         user = cursor.fetchone()
 
         if user is None:
-            if len(data['grupo_sanguineo']) == 0:
-                data['grupo_sanguineo'] = 'null'
             query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
                     fecha_ingreso, u_password, activo, grupo_sanguineo, telefono) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
                     '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, {data['grupo_sanguineo']}, '{data['telefono']}');"""
-            print(query)
-            cursor.execute(query)
+                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, %s, '{data['telefono']}');"""
+            cursor.execute(query, (data['grupo_sanguineo'],))
             db.connection.commit()
 
             cursor.close()
