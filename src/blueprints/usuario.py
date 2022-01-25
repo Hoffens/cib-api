@@ -97,14 +97,29 @@ def crear_usuario():
             db.connection.commit()
 
             if "telefono" in data:
-                query = f"insert into usuario (telefono) values ('{data['telefono']}');"
+                query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
+                        fecha_ingreso, u_password, activo, telefono) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
+                        '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
+                        '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, '{data['telefono']}');"""
                 cursor.execute(query)
                 db.connection.commit()
 
-            if "grupo_sanguineo" in data:
-                query = f"insert into usuario (grupo_sanguineo) values ({data['grupo_sanguineo']});"
+            elif "grupo_sanguineo" in data:
+                query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
+                        fecha_ingreso, u_password, activo, grupo_sanguineo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
+                        '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
+                        '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, {data['grupo_sanguineo']});"""
                 cursor.execute(query)
                 db.connection.commit()
+
+            else
+                query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
+                        fecha_ingreso, u_password, activo) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
+                        '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
+                        '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1);"""
+                cursor.execute(query)
+                db.connection.commit()
+
 
             cursor.close()
             return jsonify({'status': 'Ok', 'message': 'Usuario creado correctamente.'}), 200
