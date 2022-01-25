@@ -19,6 +19,8 @@ def register_extensions(app):
 def register_blueprints(app):
     from src.blueprints.auth import auth
     from src.blueprints.usuario import usuario
+    from src.blueprints.usuario_compania import usuario_compania
+    from src.blueprints.perfil_usuario import perfil_usuario
     from src.blueprints.compania import compania
     from src.blueprints.rol import rol
     from src.blueprints.acto import acto
@@ -33,6 +35,8 @@ def register_blueprints(app):
 
     app.register_blueprint(auth)    
     app.register_blueprint(usuario)
+    app.register_blueprint(usuario_compania)
+    app.register_blueprint(perfil_usuario)
     app.register_blueprint(compania)    
     app.register_blueprint(rol)
     app.register_blueprint(acto)
