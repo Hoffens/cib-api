@@ -34,6 +34,16 @@ usuario_schema = {
                 "fecha_nacimiento", "correo", "activo", "rut_cuenta"]
 }
 
+perfil_usuario_schema = {
+    "type" : "object",
+    "properties" : {
+        "password" : {"type" : "string"},
+        "correo" : {"type" : "string"},
+        "telefono" : {"type" : "string"},
+    },
+    "required": ["password", "correo", "telefono"]
+}
+
 obt_usuario_schema = {
         "type" : "object",
         "properties" : {
@@ -254,6 +264,29 @@ def actualizar_usuario_compania():
             return jsonify({ 'status': 'Ok', 'message' : 'Usuario actualizado correctamente.'}), 200
 
         return jsonify({ 'status': 'Ok', 'message' : 'Usuario no existe.'}), 404
+
+    except:
+        return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
+
+
+@usuario.route('/api/perfil_usuario', methods=['PUT'])
+def actualizar_perfil_usuario():
+    try:
+        data = request.get_json()        
+        validate(instance=data, schema=perfil_usuario_schema)
+        cursor = db.connection.cursor()
+
+        data = request.get_json()
+        validate(instance=data, schema=usuario_schema)
+        hashed_password = bcrypt.hashpw(
+        data['password'].encode("utf-8"), bcrypt.gensalt())
+        query = f"""UPDATE usuario SET password = '{hashed_password.decode('utf-8')}', correo = '{data['correo']}', telefono = '{data['telefono']}' where rut = {data['rut']};"""
+
+        cursor.execute(query)
+        db.connection.commit()
+        cursor.close()
+
+        return jsonify({ 'status': 'Ok', 'message' : 'Perfil de usuario actualizado correctamente.'}), 200
 
     except:
         return jsonify({ 'status': 'Error', 'message' : 'Error inesperado, verifique que la información cargada sea correcta.' }), 500
