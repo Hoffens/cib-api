@@ -63,7 +63,7 @@ def crear_modelo_carro():
 def listado_modelo_carro():
     try:
         cursor = db.connection.cursor()
-        query = f"""SELECT ma.nombre, mo.nombre, mo.anio from modelo_carro mo inner join marca_carro ma on mo.marca_id = ma_id;"""
+        query = f"""SELECT ma.nombre, mo.nombre, mo.anio from modelo_carro mo inner join marca_carro ma on mo.marca.id = ma.id;"""
         cursor.execute(query)
         modelo_carro_json = query_to_json_list(cursor)
         cursor.close()
