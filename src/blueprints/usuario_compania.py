@@ -74,9 +74,9 @@ def crear_usuario_compania():
                       )
                     VALUES
                       (
-                        {data['rut'] },
+                        {data['rut']},
                         '{compania}',
-                        { data['rol'] },
+                        {data['rol']},
                         '{data['nombre']}',
                         '{data['apellido_paterno']}',
                         '{data['apellido_materno']}',
@@ -84,7 +84,7 @@ def crear_usuario_compania():
                         '{data['correo']}',
                         CURDATE(),
                         '{hashed_password.decode('utf -8')}',
-                        1
+                        1,
                         '{data['telefono']}',
                         {data['grupo_sanguineo']}
                       );
