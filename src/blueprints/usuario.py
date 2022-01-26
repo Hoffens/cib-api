@@ -6,7 +6,7 @@ from src.service.to_json import query_to_json_list, query_to_json
 from extensions import db
 
 usuario = Blueprint('usuario', __name__)
-crear_usuario_schema = {
+usuario_schema = {
     "type": "object",
     "properties": {
         "rut": {"type": "number"},
@@ -30,49 +30,13 @@ crear_usuario_schema = {
                  "fecha_nacimiento", "correo", "activo", "rut_cuenta"]
 }
 
-actualizar_usuario_schema = {
-    "type": "object",
-    "required": ["rut", "rut_cuenta"],
-    "anyOf": [
-        {"required": ["password"]},
-        {"required": ["compania"]},
-        {"required": ["rol"]},
-        {"required": ["nombre"]},
-        {"required": ["apellido_paterno"]},
-        {"required": ["apellido_materno"]},
-        {"required": ["fecha_nacimiento"]},
-        {"required": ["correo"]},
-        {"required": ["telefono"]},
-        {"required": ["grupo_sanguineo"]},
-        {"required": ["activo"]}
-    ],
-    "properties": {
-        "rut": {"type": "number"},
-        "password": {"type": "string"},
-        "compania": {"type": "number"},
-        "rol": {"type": "number"},
-        "nombre": {"type": "string"},
-        "apellido_paterno": {"type": "string"},
-        "apellido_materno": {"type": "string"},
-        "fecha_nacimiento": {
-            "type": "string",
-            "format": "date"
-        },
-        "correo": {"type": "string"},
-        "telefono": {"type": "string"},
-        "grupo_sanguineo": {"type": ["number", "null"]},
-        "activo": {"type": "boolean"},
-        "rut_cuenta": {"type": "number"}
-    }
-}
-
 
 @usuario.route('/api/usuario', methods=['POST'])
 #@token_required
 def crear_usuario():
     #try:
         data = request.get_json()
-        validate(instance=data, schema=crear_usuario_schema)
+        validate(instance=data, schema=usuario_schema)
 
         cursor = db.connection.cursor()
         # Solo el sec. gral puede operar
@@ -126,7 +90,7 @@ def listado_usuarios():
 def actualizar_usuario():
     try:
         data = request.get_json()
-        validate(instance=data, schema=actualizar_usuario_schema)
+        validate(instance=data, schema=usuario_schema)
         cursor = db.connection.cursor()
 
         # Solo el sec. gral puede operar
