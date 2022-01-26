@@ -33,6 +33,7 @@ def register_blueprints(app):
     from src.blueprints.apodo_herramienta import apodo_herramienta
     from src.blueprints.grupo_sanguineo import grupo_sanguineo
     from src.blueprints.informe_tecnico import inf_tec
+    from src.blueprints.asistencia_usuario import asistencia_usuario
 
     app.register_blueprint(auth)    
     app.register_blueprint(usuario)
@@ -50,6 +51,7 @@ def register_blueprints(app):
     app.register_blueprint(apodo_herramienta)
     app.register_blueprint(grupo_sanguineo)
     app.register_blueprint(inf_tec)
+    app.register_blueprint(asistencia_usuario)
 
 
 if __name__ == '__main__':
