@@ -54,8 +54,8 @@ def crear_carro():
 
         if carro is None:
             query = f"""INSERT INTO carro (patente, compania, modelo, tipo, siguiente_mantencion, anio_fabricacion, activo) values ('{data['patente']}', 
-                    {data['compania']}, {data['modelo']}, {data['tipo']}, '{data['siguiente_mantencion']}', {data['anio_fabricacion']}, {data['activo']})"""
-            cursor.execute(query)
+                    {data['compania']}, {data['modelo']}, {data['tipo']}, '{data['siguiente_mantencion']}', %s, {data['activo']})"""
+            cursor.execute(query, (data['anio_fabricacion'],))
             db.connection.commit()
             cursor.close()
             return jsonify({'status': 'Ok', 'message': 'Carro creado correctamente.'}), 200
