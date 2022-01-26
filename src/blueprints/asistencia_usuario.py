@@ -61,15 +61,15 @@ def crear_asistencia_usuario():
         return jsonify({'status': 'Error', 'message': 'Error inesperado.'}), 500
 
 
-@asistencia_usuario.route('/api/asistencia_usuario', methods=['GET'])
+@asistencia_usuario.route('/api/asistencia_usuario/<rut>', methods=['GET'])
 #@token_required
-def obtener_asistencia_usuario():
+def obtener_asistencia_usuario(rut):
     try:
-        data = request.get_json()
-        validate(instance=data, schema=obtener_asistencia_usuario_schema)
+        #data = request.get_json()
+        #validate(instance=data, schema=obtener_asistencia_usuario_schema)
         cursor = db.connection.cursor()
 
-        query = f"select rut, acto_de_servicio from acto_de_servicio_usuario where rut = {data['rut']}"
+        query = f"select rut, acto_de_servicio from acto_de_servicio_usuario where rut = {rut}"
         cursor.execute(query)
         asistencia_usuario_json = query_to_json_list(cursor)
 
