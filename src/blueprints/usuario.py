@@ -51,10 +51,40 @@ def crear_usuario():
         user = cursor.fetchone()
 
         if user is None:
-            query = f"""INSERT INTO usuario (rut, compania, rol, nombre, apellido_paterno, apellido_materno, fecha_nacimiento, correo,
-                    fecha_ingreso, u_password, activo, grupo_sanguineo, telefono) VALUES ({data['rut']}, {data['compania']}, {data['rol']}, 
-                    '{data['nombre']}', '{data['apellido_paterno']}', '{data['apellido_materno']}', date('{data['fecha_nacimiento']}'), 
-                    '{data['correo']}', CURDATE(), '{hashed_password.decode('utf-8')}', 1, %s, '{data['telefono']}');"""
+            query = f"""
+                        INSERT INTO
+                          usuario (
+                            rut,
+                            compania,
+                            rol,
+                            nombre,
+                            apellido_paterno,
+                            apellido_materno,
+                            fecha_nacimiento,
+                            correo,
+                            fecha_ingreso,
+                            u_password,
+                            activo,
+                            grupo_sanguineo,
+                            telefono
+                          )
+                        VALUES
+                          (
+                            { data['rut'] },
+                            { data['compania'] },
+                            { data['rol'] },
+                            '{data['nombre']}',
+                            '{data['apellido_paterno']}',
+                            '{data['apellido_materno']}',
+                            date('{data['fecha_nacimiento']}'),
+                            '{data['correo']}',
+                            CURDATE(),
+                            '{hashed_password.decode('utf-8')}',
+                            1,
+                            %s,
+                            '{data['telefono']}'
+                          );
+                    """
             cursor.execute(query, (data['grupo_sanguineo'],))
             db.connection.commit()
 
@@ -72,9 +102,28 @@ def crear_usuario():
 def listado_usuarios():
     try:
         cursor = db.connection.cursor()
-        query = f"""SELECT u.rut, c.nombre as compania, r.nombre as rol, u.nombre, u.apellido_paterno, u.apellido_materno, u.fecha_nacimiento, 
-                u.correo, u.telefono, u.fecha_ingreso, gs.tipo as grupo_sanguineo, u.activo FROM usuario u INNER JOIN compania c ON u.compania = 
-                c.numero INNER JOIN rol r ON r.id = u.rol LEFT JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo ORDER BY c.numero"""
+        query = f"""
+                    SELECT
+                      u.rut,
+                      c.nombre as compania,
+                      r.nombre as rol,
+                      u.nombre,
+                      u.apellido_paterno,
+                      u.apellido_materno,
+                      u.fecha_nacimiento,
+                      u.correo,
+                      u.telefono,
+                      u.fecha_ingreso,
+                      gs.tipo as grupo_sanguineo,
+                      u.activo
+                    FROM
+                      usuario u
+                      INNER JOIN compania c ON u.compania = c.numero
+                      INNER JOIN rol r ON r.id = u.rol
+                      LEFT JOIN grupo_sanguineo gs ON gs.id = u.grupo_sanguineo
+                    ORDER BY
+                      c.numero
+                """
         cursor.execute(query)
         users_json = query_to_json_list(cursor)
         cursor.close()
@@ -106,7 +155,25 @@ def actualizar_usuario():
         if user:
 
             hashed_password = bcrypt.hashpw(data['password'].encode("utf-8"), bcrypt.gensalt())
-            query = f"""UPDATE usuario set rut = {data['rut']}, u_password = '{hashed_password.decode('utf-8')}', compania = {data['compania']}, rol = {data['rol']}, nombre = '{data['nombre']}', apellido_paterno = '{data['apellido_paterno']}', apellido_materno = '{data['apellido_materno']}', fecha_nacimiento = '{data['fecha_nacimiento']}', correo = '{data['correo']}', telefono = '{data['telefono']}', grupo_sanguineo = %s, activo = {data['activo']} where rut = {data['rut']};"""
+            query = f"""
+                        update
+                          usuario
+                        set
+                          rut = {data['rut']},
+                          u_password = '{hashed_password.decode('utf-8')}',
+                          compania = {data['compania']},
+                          rol = {data['rol']},
+                          nombre = '{data['nombre']}',
+                          apellido_paterno = '{data['apellido_paterno']}',
+                          apellido_materno = '{data['apellido_materno']}',
+                          fecha_nacimiento = '{data['fecha_nacimiento']}',
+                          correo = '{data['correo']}',
+                          telefono = '{data['telefono']}',
+                          grupo_sanguineo = %s,
+                          activo = {data['activo']}
+                        where
+                          rut = {data['rut']};
+                    """
             cursor.execute(query, (data['grupo_sanguineo'], ))
             db.connection.commit()
             cursor.close()
