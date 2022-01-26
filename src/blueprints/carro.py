@@ -26,7 +26,7 @@ carro_schema = {
             "type": "string",
             "format": "date"
         },
-        "anio_fabricacion": {"type": "number"},
+        "anio_fabricacion": {"type": ["number", "null"]},
         "activo": {"type": "boolean"},
         "usuario_rut": {"type": "number"}
     },
