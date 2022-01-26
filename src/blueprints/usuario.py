@@ -169,7 +169,7 @@ def actualizar_usuario():
                           fecha_nacimiento = '{data['fecha_nacimiento']}',
                           correo = '{data['correo']}',
                           telefono = '{data['telefono']}',
-                          grupo_sanguineo = %s,
+                          grupo_sanguineo = % s,
                           activo = {data['activo']}
                         where
                           rut = {data['rut']};

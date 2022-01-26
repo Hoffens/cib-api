@@ -59,7 +59,7 @@ def crear_marca_carro():
 def listado_marca_carro():
     try:
         cursor = db.connection.cursor()
-        query = "SELECT id, nombre from marca_carro"
+        query = "SELECT id, nombre from marca_carro ORDER BY nombre"
         cursor.execute(query)
         marca_carro_json = query_to_json_list(cursor)
         cursor.close()
